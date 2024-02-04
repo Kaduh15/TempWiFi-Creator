@@ -36,7 +36,7 @@ func main() {
 		return
 	}
 
-	driver.Login(page, "multipro", "multipro")
+	driver.Login(page, "admin", "admin")
 	time.Sleep(5 * time.Second)
 
 	// Close the browser
