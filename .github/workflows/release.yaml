@@ -1,31 +1,28 @@
-# .github/workflows/release.yaml
+name: Build Release
 
 on:
-  release:
-    types: [created]
-
-permissions:
-    contents: write
-    packages: write
+  push:
+    branches:
+      - main
 
 jobs:
-  releases-matrix:
-    name: Release Go Binary
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # build and publish in parallel: linux/386, linux/amd64, linux/arm64, windows/386, windows/amd64, darwin/amd64, darwin/arm64
-        goos: [linux, windows, darwin]
-        goarch: ["386", amd64, arm64]
-        exclude:
-          - goarch: "386"
-            goos: darwin
-          - goarch: arm64
-            goos: windows
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
       with:
-        github_token: ${{ secrets.GH_TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
+        go-version: 1.16
+
+    - name: Build for Linux
+      run: GOOS=linux GOARCH=amd64 go build -o ${{ github.repository_owner }}-${{ github.repository_name }}-linux-amd64
+
+    - name: Build for Windows
+      run: GOOS=windows GOARCH=amd64 go build -o ${{ github.repository_owner }}-${{ github.repository_name }}-windows-amd64.exe
+
+    - name: Build for macOS
+      run: GOOS=darwin GOARCH=amd64 go build -o ${{ github.repository_owner }}-${{ github.repository_name }}-darwin-amd64
