@@ -11,7 +11,11 @@ import (
 	"github.com/playwright-community/playwright-go"
 )
 
+const version = "0.1.0"
+
 func main() {
+	fmt.Println("TempWiFi-Creator v" + version)
+
 	if err := playwright.Install(); err != nil {
 		fmt.Println("could not install playwright")
 		return

@@ -18,6 +18,11 @@ jobs:
       with:
         go-version: 1.16
 
+    - name: Update Version
+      run: |
+        chmod +x update-version.sh
+        ./update-version.sh
+
     - name: Build for Linux
       run: GOOS=linux GOARCH=amd64 go build -o ${{ github.repository_owner }}-${{ github.repository_name }}-linux-amd64
 
@@ -26,3 +31,14 @@ jobs:
 
     - name: Build for macOS
       run: GOOS=darwin GOARCH=amd64 go build -o ${{ github.repository_owner }}-${{ github.repository_name }}-darwin-amd64
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        tag_name: v${{ env.VERSION }}
+        release_name: Release v${{ env.VERSION }}
+        draft: false
+        prerelease: false
