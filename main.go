@@ -27,10 +27,7 @@ func main() {
 	}
 	defer pw.Stop()
 
-	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
-		Args:     []string{"--no-sandbox, --disable-setuid-sandbox, --headless=new"},
-		Headless: playwright.Bool(false),
-	})
+	browser, err := pw.Chromium.Launch()
 	if err != nil {
 		fmt.Println("Erro ao abrir o navegador")
 		panic(err)
