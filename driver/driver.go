@@ -6,8 +6,11 @@ import (
 )
 
 func Login(page playwright.Page, username, password string) {
-	// Navigate to the login page
 	page.Goto("http://192.168.1.1")
+
+	if visible, err := page.Locator("#LogOffLnk").IsVisible(); visible || err != nil {
+		return
+	}
 
 	inputUsername := page.Locator("input[id='Frm_Username']")
 	inputUsername.Fill(username)
@@ -15,7 +18,6 @@ func Login(page playwright.Page, username, password string) {
 	inputPassword := page.Locator("input[id='Frm_Password']")
 	inputPassword.Fill(password)
 
-	// Click the login button
 	page.Locator("input[id='LoginId']").Click()
 }
 
