@@ -3,6 +3,7 @@ module github.com/kaduh15/TempWiFi-Creator
 go 1.21.6
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/lucsky/cuid v1.2.1
 	github.com/playwright-community/playwright-go v0.4101.1
 )

@@ -1,22 +1,27 @@
 package driver
 
 import (
+	"fmt"
+
+	"github.com/kaduh15/TempWiFi-Creator/config"
 	"github.com/lucsky/cuid"
 	"github.com/playwright-community/playwright-go"
 )
 
-func Login(page playwright.Page, username, password string) {
-	page.Goto("http://192.168.1.1")
+func Login(page playwright.Page) {
+	fmt.Println(config.PASSWORD, config.USERNAME, config.IP_ROUTER, config.SSID)
+
+	page.Goto(config.IP_ROUTER)
 
 	if visible, err := page.Locator("#LogOffLnk").IsVisible(); visible || err != nil {
 		return
 	}
 
 	inputUsername := page.Locator("input[id='Frm_Username']")
-	inputUsername.Fill(username)
+	inputUsername.Fill(config.USERNAME)
 
 	inputPassword := page.Locator("input[id='Frm_Password']")
-	inputPassword.Fill(password)
+	inputPassword.Fill(config.PASSWORD)
 
 	page.Locator("input[id='LoginId']").Click()
 }
@@ -26,9 +31,9 @@ type Network struct {
 	Password string
 }
 
-func GenerateNetwork(page playwright.Page, ssid string) Network {
+func GenerateNetwork(page playwright.Page) Network {
 	slug := cuid.Slug()
-	nameNet := ssid + " - " + slug
+	nameNet := config.SSID + " - " + slug
 	password := cuid.Slug()
 
 	btnlocalNetwork := page.Locator("a[id='localnet']")

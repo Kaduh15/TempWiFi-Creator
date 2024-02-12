@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
@@ -10,11 +11,15 @@ import (
 
 	qrcode "github.com/skip2/go-qrcode"
 
+	"github.com/kaduh15/TempWiFi-Creator/config"
 	"github.com/kaduh15/TempWiFi-Creator/driver"
 	"github.com/playwright-community/playwright-go"
 )
 
 func main() {
+
+	config.InitDotEnv()
+
 	if err := playwright.Install(); err != nil {
 		fmt.Println("Erro ao instalar o Playwright")
 		panic(err)
@@ -27,7 +32,16 @@ func main() {
 	}
 	defer pw.Stop()
 
-	browser, err := pw.Chromium.Launch()
+	var arg []string
+
+	if os.Getenv("GO_DEV") == "true" {
+		arg = []string{"--sandbox --headless=new"}
+	}
+
+	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
+		Args:     arg,
+		Headless: playwright.Bool(false),
+	})
 	if err != nil {
 		fmt.Println("Erro ao abrir o navegador")
 		panic(err)
@@ -42,11 +56,11 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Hello World")
 	w.SetOnClosed(func() {
+		fmt.Println("Fechando a aplicação")
 		driver.DisableWifi(page)
 
 		browser.Close()
 		pw.Stop()
-		a.Quit()
 	})
 
 	var network driver.Network
@@ -76,8 +90,8 @@ func main() {
 		buttonEnable.Disable()
 		titleText.Text = "Aguarde enquanto a rede é criada"
 		titleText.Refresh()
-		driver.Login(page, "multipro", "multipro")
-		network = driver.GenerateNetwork(page, "TempWiFi")
+		driver.Login(page)
+		network = driver.GenerateNetwork(page)
 		name := network.Name
 		password := network.Password
 
