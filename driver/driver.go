@@ -1,16 +1,12 @@
 package driver
 
 import (
-	"fmt"
-
 	"github.com/kaduh15/TempWiFi-Creator/config"
 	"github.com/lucsky/cuid"
 	"github.com/playwright-community/playwright-go"
 )
 
 func Login(page playwright.Page) {
-	fmt.Println(config.PASSWORD, config.USERNAME, config.IP_ROUTER, config.SSID)
-
 	page.Goto(config.IP_ROUTER)
 
 	if visible, err := page.Locator("#LogOffLnk").IsVisible(); visible || err != nil {
