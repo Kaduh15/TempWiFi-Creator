@@ -33,14 +33,16 @@ func main() {
 	defer pw.Stop()
 
 	var arg []string
+	var headless *bool
 
 	if os.Getenv("GO_DEV") == "true" {
 		arg = []string{"--sandbox --headless=new"}
+		headless = playwright.Bool(false)
 	}
 
 	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
 		Args:     arg,
-		Headless: playwright.Bool(false),
+		Headless: headless,
 	})
 	if err != nil {
 		fmt.Println("Erro ao abrir o navegador")
@@ -55,12 +57,13 @@ func main() {
 
 	a := app.New()
 	w := a.NewWindow("Hello World")
-	w.SetOnClosed(func() {
+	w.SetCloseIntercept(func() {
 		fmt.Println("Fechando a aplicação")
 		driver.DisableWifi(page)
 
 		browser.Close()
 		pw.Stop()
+		w.Close()
 	})
 
 	var network driver.Network
